@@ -13,6 +13,7 @@ export default function Screen() {
     const leftImageRef = useRef<HTMLDivElement>(null);
     const rightImageRef = useRef<HTMLDivElement>(null);
     const stageRef = useRef<HTMLDivElement>(null);
+    const logoRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const leftScreen = leftScreenRef.current;
@@ -20,9 +21,9 @@ export default function Screen() {
         const leftImage = leftImageRef.current;
         const rightImage = rightImageRef.current;
         const stage = stageRef.current;
+        const logo = logoRef.current;
 
-        if (leftScreen && rightScreen && leftImage && rightImage && stage) {
-
+        if (leftScreen && rightScreen && leftImage && rightImage && stage && logo) {
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: stage,
@@ -34,7 +35,7 @@ export default function Screen() {
                 },
             });
 
-            
+            // Existing animations
             tl.to(
                 [leftScreen, rightScreen],
                 {
@@ -43,37 +44,50 @@ export default function Screen() {
                     duration: 3,
                 },
                 0 // Start both at the same time
-            ).to(
-                leftImage,
-                {
-                    x: () => {
-                        const vwCenter = stage.offsetWidth / 2;
-                        const elementWidth = leftImage.offsetWidth;
-                        return vwCenter - elementWidth;
+            )
+                .to(
+                    leftImage,
+                    {
+                        x: () => {
+                            const vwCenter = stage.offsetWidth / 2;
+                            const elementWidth = leftImage.offsetWidth;
+                            return vwCenter - elementWidth;
+                        },
+                        ease: "none",
+                        duration: 4,
                     },
-                    ease: "none",
-                    duration: 4,
-                },
-                3 // Start after stage animations
-            ).to(
-                rightImage,
-                {
-                    x: () => {
-                        const vwCenter = stage.offsetWidth / 2;
-                        const elementWidth = rightImage.offsetWidth;
-                        return -(vwCenter - elementWidth);
+                    3 // Start after stage animations
+                )
+                .to(
+                    rightImage,
+                    {
+                        x: () => {
+                            const vwCenter = stage.offsetWidth / 2;
+                            const elementWidth = rightImage.offsetWidth;
+                            return -(vwCenter - elementWidth);
+                        },
+                        ease: "none",
+                        duration: 4,
                     },
-                    ease: "none",
-                    duration: 4,
+                    3 // Synchronize with left image animation
+                );
+
+            // New animation: Pop-in logo
+            tl.to(
+                logo,
+                {
+                    opacity: 1,
+                    scale: 1,
+                    ease: "elastic.out(1, 0.5)", // Popping effect
+                    duration: 1.5,
                 },
-                3 // Synchronize with left image animation
+                "+=0.5" // Add a small delay after the previous animations
             );
         }
     }, []);
 
     return (
         <div ref={stageRef} className="relative">
-
             <div className="flex flex-row overflow-hidden">
                 <div ref={leftScreenRef} className="w-1/2 h-screen bg-red-400 z-10">
                     <Image src="/screenLeft.jpg" alt="Left Screen" fill />
@@ -83,10 +97,13 @@ export default function Screen() {
                 </div>
             </div>
 
-            <div
-                
-                className="absolute top-0 left-0 bg-[url('/stage.jpg')] bg-center bg-cover bg-no-repeat h-screen w-full"
-            >
+            <div className="absolute top-0 left-0 bg-[url('/stage.jpg')] bg-center bg-cover bg-no-repeat h-screen w-full">
+                {/* Logo Image */}
+                <div
+                    ref={logoRef}
+                    className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-56 bg-[url('/logo.png')] bg-center bg-cover bg-no-repeat opacity-0 scale-0"
+                ></div>
+
                 {/* Left Image */}
                 <div
                     ref={leftImageRef}
@@ -103,8 +120,6 @@ export default function Screen() {
                     <p className="text-white text-[100px] font-semibold">riti</p>
                 </div>
             </div>
-
-            
 
             <div className="h-screen text-center text-3xl pt-20">Sample Scroll Space</div>
         </div>

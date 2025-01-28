@@ -34,7 +34,7 @@ export default function Home() {
           return vwCenter - elementWidth; // Center position accounting for element width
         },
         ease: "none",
-        duration: 2,
+        duration: 4,
       });
 
       // GSAP Animation for Right Image
@@ -54,7 +54,7 @@ export default function Home() {
           return -(vwCenter - elementWidth); // Center position accounting for element width
         },
         ease: "none",
-        duration: 2,
+        duration: 4,
       });
     }
   }, []);

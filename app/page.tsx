@@ -3,91 +3,110 @@
 import gsap from "gsap";
 import { useEffect, useRef } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Image from "next/image";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function Home() {
-  const leftImageRef = useRef<HTMLDivElement>(null);
-  const rightImageRef = useRef<HTMLDivElement>(null);
-  const sectionRef = useRef<HTMLDivElement>(null);
+export default function Screen() {
+    const leftScreenRef = useRef<HTMLDivElement>(null);
+    const rightScreenRef = useRef<HTMLDivElement>(null);
+    const leftImageRef = useRef<HTMLDivElement>(null);
+    const rightImageRef = useRef<HTMLDivElement>(null);
+    const stageRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const leftImage = leftImageRef.current;
-    const rightImage = rightImageRef.current;
-    const section = sectionRef.current;
+    useEffect(() => {
+        const leftScreen = leftScreenRef.current;
+        const rightScreen = rightScreenRef.current;
+        const leftImage = leftImageRef.current;
+        const rightImage = rightImageRef.current;
+        const stage = stageRef.current;
 
-    if (leftImage && rightImage && section) {
-      // GSAP Animation for Left Image
-      gsap.to(leftImage, {
-        scrollTrigger: {
-          trigger: leftImage,
-          start: "top 60%",
-          end: "+=300",
-          scrub: true,
-          markers: true,
-          pin: true,
-        },
-        x: () => {
-          // Dynamically calculate the center position minus half the element width
-          const vwCenter = section.offsetWidth / 2; // Center of the section
-          const elementWidth = leftImage.offsetWidth; // Width of the left image container
-          return vwCenter - elementWidth; // Center position accounting for element width
-        },
-        ease: "none",
-        duration: 4,
-      });
+        if (leftScreen && rightScreen && leftImage && rightImage && stage) {
 
-      // GSAP Animation for Right Image
-      gsap.to(rightImage, {
-        scrollTrigger: {
-          trigger: rightImage,
-          start: "top 60%",
-          end: "+=300",
-          scrub: true,
-          markers: true,
-          pin: true,
-        },
-        x: () => {
-          // Dynamically calculate the center position minus half the element width
-          const vwCenter = section.offsetWidth / 2; // Center of the viewport
-          const elementWidth = rightImage.offsetWidth; // Width of the right image container
-          return -(vwCenter - elementWidth); // Center position accounting for element width
-        },
-        ease: "none",
-        duration: 4,
-      });
-    }
-  }, []);
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: stage,
+                    start: "top top",
+                    end: "+=1000", // Extend the scroll duration
+                    scrub: true,
+                    pin: true, // Keep the stage pinned
+                    pinSpacing: true,
+                },
+            });
 
-  return (
-    <>
-    <section
-      ref={sectionRef}
-      className="h-[170vh] flex items-center justify-between bg-gray-800 overflow-hidden"
-    >
-      {/* Left Image */}
-      <div
-        ref={leftImageRef}
-        className="w-60 h-60 bg-blue-500 flex items-center justify-end z-10 rounded-lg shadow-lg"
-      >
-        <p className="text-white text-7xl font-semibold">Aak</p>
-      </div>
+            
+            tl.to(
+                [leftScreen, rightScreen],
+                {
+                    x: (i) => (i === 0 ? -leftScreen.offsetWidth : rightScreen.offsetWidth),
+                    ease: "none",
+                    duration: 3,
+                },
+                0 // Start both at the same time
+            ).to(
+                leftImage,
+                {
+                    x: () => {
+                        const vwCenter = stage.offsetWidth / 2;
+                        const elementWidth = leftImage.offsetWidth;
+                        return vwCenter - elementWidth;
+                    },
+                    ease: "none",
+                    duration: 4,
+                },
+                3 // Start after stage animations
+            ).to(
+                rightImage,
+                {
+                    x: () => {
+                        const vwCenter = stage.offsetWidth / 2;
+                        const elementWidth = rightImage.offsetWidth;
+                        return -(vwCenter - elementWidth);
+                    },
+                    ease: "none",
+                    duration: 4,
+                },
+                3 // Synchronize with left image animation
+            );
+        }
+    }, []);
 
-      {/* Right Image */}
-      <div
-        ref={rightImageRef}
-        className="w-60 h-60 bg-red-500 flex items-center justify-start z-10 rounded-lg shadow-lg"
-      >
-        <p className="text-white text-7xl font-semibold">riti</p>
-      </div>
+    return (
+        <div ref={stageRef} className="relative">
 
-      {/* Placeholder for scrollable content */}
-      <div className="absolute bottom-0 left-0 w-full text-center text-white">
-        <p className="text-lg">Scroll down to see the effect!</p>
-      </div>
-    </section>
+            <div className="flex flex-row overflow-hidden">
+                <div ref={leftScreenRef} className="w-1/2 h-screen bg-red-400 z-10">
+                    <Image src="/screenLeft.jpg" alt="Left Screen" fill />
+                </div>
+                <div ref={rightScreenRef} className="w-1/2 h-screen bg-blue-400 z-10">
+                    <Image src="/screenRight.jpg" alt="Right Screen" fill />
+                </div>
+            </div>
 
-    <div className="h-screen text-center text-3xl pt-20">Sample Scroll Space</div>
-    </>
-  );
+            <div
+                
+                className="absolute top-0 left-0 bg-[url('/stage.jpg')] bg-center bg-cover bg-no-repeat h-screen w-full"
+            >
+                {/* Left Image */}
+                <div
+                    ref={leftImageRef}
+                    className="absolute left-0 bottom-0 w-96 h-96 bg-[url('/womenLeft.png')] bg-center bg-cover bg-no-repeat flex items-start justify-end"
+                >
+                    <p className="text-white text-[100px] font-semibold">Aak</p>
+                </div>
+
+                {/* Right Image */}
+                <div
+                    ref={rightImageRef}
+                    className="absolute right-0 bottom-0 w-96 h-96 bg-[url('/womenRight.png')] bg-center bg-cover bg-no-repeat flex items-start justify-start"
+                >
+                    <p className="text-white text-[100px] font-semibold">riti</p>
+                </div>
+            </div>
+
+            
+
+            <div className="h-screen text-center text-3xl pt-20">Sample Scroll Space</div>
+        </div>
+    );
 }

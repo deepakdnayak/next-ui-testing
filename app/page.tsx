@@ -24,66 +24,146 @@ export default function Screen() {
         const logo = logoRef.current;
 
         if (leftScreen && rightScreen && leftImage && rightImage && stage && logo) {
-            const tl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: stage,
-                    start: "top top",
-                    end: "+=1000", // Extend the scroll duration
-                    scrub: true,
-                    pin: true, // Keep the stage pinned
-                    pinSpacing: true,
-                },
-            });
 
-            // Existing animations
-            tl.to(
-                [leftScreen, rightScreen],
+            const mm = gsap.matchMedia();
+
+            mm.add(
                 {
-                    x: (i) => (i === 0 ? -leftScreen.offsetWidth : rightScreen.offsetWidth),
-                    ease: "none",
-                    duration: 5,
+                    // Define screen size breakpoints
+                    mobile: "(max-width: 767px)",
+                    //tablet: " and (max-width: 1023px)",
+                    desktop: "(min-width: 768px)",
                 },
-                0 // Start both at the same time
+                () => {
+                    const isMobile = window.matchMedia("(max-width: 767px)").matches;
+                    //const isTablet = window.matchMedia("(min-width: 768px) and (max-width: 1023px)").matches;
+                    const isDesktop = window.matchMedia("(min-width: 768px)").matches;
+
+
+                    
+
+                    if (isMobile){
+
+                        const tl = gsap.timeline();
+
+                        // Existing animations
+                        tl.to(
+                            [leftScreen, rightScreen],
+                            {
+                                x: (i) => (i === 0 ? -leftScreen.offsetWidth : rightScreen.offsetWidth),
+                                ease: "none",
+                                duration: 2,
+                            },
+                            0 // Start both at the same time
+                        )
+                        .to(
+                            leftImage,
+                            {
+                                x: () => {
+                                    const vwCenter = window.innerWidth / 2;
+                                    const elementWidth = rightImage.offsetWidth / 2;
+                                    return vwCenter - elementWidth;
+                                },
+                                ease: "none",
+                                duration: 2,
+                            },
+                            2 // Start after stage animations
+                        )
+                        .to(
+                            rightImage,
+                            {
+                                x: () => {
+                                    const vwCenter = window.innerWidth / 2;
+                                    const elementWidth = rightImage.offsetWidth / 2;
+                                    return -(vwCenter - elementWidth);
+                                },
+                                ease: "none",
+                                duration: 2,
+                            },
+                            2 // Synchronize with left image animation
+                        );
+
+                        // New animation: Pop-in logo
+                        tl.to(
+                            logo,
+                            {
+                                opacity: 1,
+                                scale: 1,
+                                ease: "elastic.out(1, 0.5)", // Popping effect
+                                duration: 1.5,
+                            },
+                            "+=0.5" // Add a small delay after the previous animations
+                        );
+
+                    }
+                    else if(isDesktop) {
+
+                        const tl = gsap.timeline({
+                            scrollTrigger: {
+                                trigger: stage,
+                                start: "top top",
+                                end: "+=1000", // Extend the scroll duration
+                                scrub: true,
+                                pin: true, // Keep the stage pinned
+                                pinSpacing: true,
+                            },
+                        });
+
+                        // Existing animations
+                        tl.to(
+                            [leftScreen, rightScreen],
+                            {
+                                x: (i) => (i === 0 ? -leftScreen.offsetWidth : rightScreen.offsetWidth),
+                                ease: "none",
+                                duration: 5,
+                            },
+                            0 // Start both at the same time
+                        )
+                        .to(
+                            leftImage,
+                            {
+                                x: () => {
+                                    const vwCenter = stage.offsetWidth / 2;
+                                    const elementWidth = leftImage.offsetWidth;
+                                    return vwCenter - elementWidth;
+                                },
+                                ease: "none",
+                                duration: 4,
+                            },
+                            5 // Start after stage animations
+                        )
+                        .to(
+                            rightImage,
+                            {
+                                x: () => {
+                                    const vwCenter = stage.offsetWidth / 2;
+                                    const elementWidth = rightImage.offsetWidth;
+                                    return -(vwCenter - elementWidth);
+                                },
+                                ease: "none",
+                                duration: 4,
+                            },
+                            5 // Synchronize with left image animation
+                        );
+
+                        // New animation: Pop-in logo
+                        tl.to(
+                            logo,
+                            {
+                                opacity: 1,
+                                scale: 1,
+                                ease: "elastic.out(1, 0.5)", // Popping effect
+                                duration: 1.5,
+                            },
+                            "+=0.5" // Add a small delay after the previous animations
+                        );
+                    }
+        
+                }
             )
-                .to(
-                    leftImage,
-                    {
-                        x: () => {
-                            const vwCenter = stage.offsetWidth / 2;
-                            const elementWidth = leftImage.offsetWidth;
-                            return vwCenter - elementWidth;
-                        },
-                        ease: "none",
-                        duration: 4,
-                    },
-                    5 // Start after stage animations
-                )
-                .to(
-                    rightImage,
-                    {
-                        x: () => {
-                            const vwCenter = stage.offsetWidth / 2;
-                            const elementWidth = rightImage.offsetWidth;
-                            return -(vwCenter - elementWidth);
-                        },
-                        ease: "none",
-                        duration: 4,
-                    },
-                    5 // Synchronize with left image animation
-                );
-
-            // New animation: Pop-in logo
-            tl.to(
-                logo,
-                {
-                    opacity: 1,
-                    scale: 1,
-                    ease: "elastic.out(1, 0.5)", // Popping effect
-                    duration: 1.5,
-                },
-                "+=0.5" // Add a small delay after the previous animations
-            );
+            return () => mm.revert(); 
         }
+        
     }, []);
 
     return (
@@ -92,7 +172,7 @@ export default function Screen() {
                 <div ref={leftScreenRef} className="relative w-1/2 h-screen z-10">
                     <Image src="/screenLeft.jpg" alt="Left Screen" fill className="object-cover sm:object-contain lg:object-cover" />
                 </div>
-                <div ref={rightScreenRef} className="w-1/2 h-screen z-10">
+                <div ref={rightScreenRef} className="relative w-1/2 h-screen z-10">
                     <Image src="/screenRight.jpg" alt="Right Screen" fill className="object-cover sm:object-contain lg:object-cover" />
                 </div>
             </div>
@@ -107,17 +187,17 @@ export default function Screen() {
                 {/* Left Image */}
                 <div
                     ref={leftImageRef}
-                    className="absolute -left-44 md:left-0 bottom-0 w-96 h-96 bg-[url('/womenLeft.png')] bg-center bg-cover bg-no-repeat flex items-start justify-end"
+                    className="absolute -left-96 md:left-0 bottom-0 w-96 h-96 bg-[url('/womenLeft.png')] bg-center bg-cover bg-no-repeat flex items-start justify-end"
                 >
-                    <p className="text-white text-[100px] font-semibold">Aak</p>
+                    <p className="text-white text-[70px] md:text-[100px] font-semibold">Aak</p>
                 </div>
 
                 {/* Right Image */}
                 <div
                     ref={rightImageRef}
-                    className="absolute -right-44 md:right-0 bottom-0 w-96 h-96 bg-[url('/womenRight.png')] bg-center bg-cover bg-no-repeat flex items-start justify-start"
+                    className="absolute -right-96 md:right-0 bottom-0 w-96 h-96 bg-[url('/womenRight.png')] bg-center bg-cover bg-no-repeat flex items-start justify-start"
                 >
-                    <p className="text-white text-[100px] font-semibold">riti</p>
+                    <p className="text-white text-[70px] md:text-[100px] font-semibold">riti</p>
                 </div>
             </div>
 

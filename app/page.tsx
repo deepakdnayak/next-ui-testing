@@ -29,24 +29,21 @@ export default function Screen() {
 
             mm.add(
                 {
-                    // Define screen size breakpoints
                     mobile: "(max-width: 767px)",
                     //tablet: " and (max-width: 1023px)",
                     desktop: "(min-width: 768px)",
                 },
                 () => {
                     const isMobile = window.matchMedia("(max-width: 767px)").matches;
-                    //const isTablet = window.matchMedia("(min-width: 768px) and (max-width: 1023px)").matches;
+                    // const isTablet = window.matchMedia("(min-width: 768px) and (max-width: 1023px)").matches;
                     const isDesktop = window.matchMedia("(min-width: 768px)").matches;
 
-
-                    
-
+                    // Animation for Mobile Screens
                     if (isMobile){
 
                         const tl = gsap.timeline();
 
-                        // Existing animations
+                        // Screen Animations
                         tl.to(
                             [leftScreen, rightScreen],
                             {
@@ -54,8 +51,9 @@ export default function Screen() {
                                 ease: "none",
                                 duration: 2,
                             },
-                            0 // Start both at the same time
+                            0 
                         )
+                        // Left Image Animation
                         .to(
                             leftImage,
                             {
@@ -67,8 +65,9 @@ export default function Screen() {
                                 ease: "none",
                                 duration: 2,
                             },
-                            2 // Start after stage animations
+                            2 
                         )
+                        // Right Image Animation
                         .to(
                             rightImage,
                             {
@@ -83,33 +82,36 @@ export default function Screen() {
                             2 // Synchronize with left image animation
                         );
 
-                        // New animation: Pop-in logo
+                        // Pop-in logo Animation
                         tl.to(
                             logo,
                             {
                                 opacity: 1,
                                 scale: 1,
-                                ease: "elastic.out(1, 0.5)", // Popping effect
+                                ease: "elastic.out(1, 0.5)", 
                                 duration: 1.5,
                             },
-                            "+=0.5" // Add a small delay after the previous animations
+                            "+=0.5" // Small delay 
                         );
 
                     }
+
+                    // Animation for Large Screens
                     else if(isDesktop) {
 
+                        // ScrollTrigger for Large Screens
                         const tl = gsap.timeline({
                             scrollTrigger: {
                                 trigger: stage,
                                 start: "top top",
-                                end: "+=1000", // Extend the scroll duration
+                                end: "+=1000", 
                                 scrub: true,
-                                pin: true, // Keep the stage pinned
+                                pin: true, 
                                 pinSpacing: true,
                             },
                         });
 
-                        // Existing animations
+                        // Screen Animations
                         tl.to(
                             [leftScreen, rightScreen],
                             {
@@ -117,8 +119,9 @@ export default function Screen() {
                                 ease: "none",
                                 duration: 5,
                             },
-                            0 // Start both at the same time
+                            0 
                         )
+                        // Left Image Animation
                         .to(
                             leftImage,
                             {
@@ -130,8 +133,9 @@ export default function Screen() {
                                 ease: "none",
                                 duration: 4,
                             },
-                            5 // Start after stage animations
+                            5 
                         )
+                        // Right Image Animation
                         .to(
                             rightImage,
                             {
@@ -143,19 +147,19 @@ export default function Screen() {
                                 ease: "none",
                                 duration: 4,
                             },
-                            5 // Synchronize with left image animation
+                            5 
                         );
 
-                        // New animation: Pop-in logo
+                        // Pop-in logo Animation
                         tl.to(
                             logo,
                             {
                                 opacity: 1,
                                 scale: 1,
-                                ease: "elastic.out(1, 0.5)", // Popping effect
+                                ease: "elastic.out(1, 0.5)", 
                                 duration: 1.5,
                             },
-                            "+=0.5" // Add a small delay after the previous animations
+                            "+=0.5" 
                         );
                     }
         
@@ -168,6 +172,8 @@ export default function Screen() {
 
     return (
         <div ref={stageRef} className="relative">
+
+            {/* Screen Segments */}
             <div className="flex flex-row overflow-hidden">
                 <div ref={leftScreenRef} className="relative w-1/2 h-screen z-10">
                     <Image src="/screenLeft.jpg" alt="Left Screen" fill className="object-cover sm:object-contain lg:object-cover" />
@@ -178,6 +184,7 @@ export default function Screen() {
             </div>
 
             <div className="absolute top-0 left-0 bg-[url('/stage.jpg')] bg-center bg-cover bg-no-repeat h-screen w-full">
+
                 {/* Logo Image */}
                 <div
                     ref={logoRef}
@@ -201,7 +208,8 @@ export default function Screen() {
                 </div>
             </div>
 
-            <div className="h-screen text-center text-3xl pt-20">Sample Scroll Space</div>
+            {/* Delete Later */}
+            {/* <div className="h-screen text-center text-3xl pt-20">Sample Scroll Space</div> */}
         </div>
     );
 }

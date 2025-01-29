@@ -41,7 +41,7 @@ export default function Screen() {
                 {
                     x: (i) => (i === 0 ? -leftScreen.offsetWidth : rightScreen.offsetWidth),
                     ease: "none",
-                    duration: 3,
+                    duration: 5,
                 },
                 0 // Start both at the same time
             )
@@ -56,7 +56,7 @@ export default function Screen() {
                         ease: "none",
                         duration: 4,
                     },
-                    3 // Start after stage animations
+                    5 // Start after stage animations
                 )
                 .to(
                     rightImage,
@@ -69,7 +69,7 @@ export default function Screen() {
                         ease: "none",
                         duration: 4,
                     },
-                    3 // Synchronize with left image animation
+                    5 // Synchronize with left image animation
                 );
 
             // New animation: Pop-in logo
@@ -89,11 +89,11 @@ export default function Screen() {
     return (
         <div ref={stageRef} className="relative">
             <div className="flex flex-row overflow-hidden">
-                <div ref={leftScreenRef} className="w-1/2 h-screen bg-red-400 z-10">
-                    <Image src="/screenLeft.jpg" alt="Left Screen" fill />
+                <div ref={leftScreenRef} className="relative w-1/2 h-screen z-10">
+                    <Image src="/screenLeft.jpg" alt="Left Screen" fill className="object-cover sm:object-contain lg:object-cover" />
                 </div>
-                <div ref={rightScreenRef} className="w-1/2 h-screen bg-blue-400 z-10">
-                    <Image src="/screenRight.jpg" alt="Right Screen" fill />
+                <div ref={rightScreenRef} className="w-1/2 h-screen z-10">
+                    <Image src="/screenRight.jpg" alt="Right Screen" fill className="object-cover sm:object-contain lg:object-cover" />
                 </div>
             </div>
 
@@ -107,7 +107,7 @@ export default function Screen() {
                 {/* Left Image */}
                 <div
                     ref={leftImageRef}
-                    className="absolute left-0 bottom-0 w-96 h-96 bg-[url('/womenLeft.png')] bg-center bg-cover bg-no-repeat flex items-start justify-end"
+                    className="absolute -left-44 md:left-0 bottom-0 w-96 h-96 bg-[url('/womenLeft.png')] bg-center bg-cover bg-no-repeat flex items-start justify-end"
                 >
                     <p className="text-white text-[100px] font-semibold">Aak</p>
                 </div>
@@ -115,7 +115,7 @@ export default function Screen() {
                 {/* Right Image */}
                 <div
                     ref={rightImageRef}
-                    className="absolute right-0 bottom-0 w-96 h-96 bg-[url('/womenRight.png')] bg-center bg-cover bg-no-repeat flex items-start justify-start"
+                    className="absolute -right-44 md:right-0 bottom-0 w-96 h-96 bg-[url('/womenRight.png')] bg-center bg-cover bg-no-repeat flex items-start justify-start"
                 >
                     <p className="text-white text-[100px] font-semibold">riti</p>
                 </div>
